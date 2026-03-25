@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Guru</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="bg-gray-50">
+
+<div id="app">
+    <div id="loginPage" class="flex items-center justify-center min-h-screen">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border-t-4 border-blue-600">
+            <h2 class="text-3xl font-extrabold mb-2 text-center text-gray-800">SIM GURU</h2>
+            <p class="text-center text-gray-500 mb-8">Silakan masuk ke akun Anda</p>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Login</label>
+                <select id="loginType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    <option value="guru">Guru (User & Password)</option>
+                    <option value="sekolah">Sekolah (NPSN)</option>
+                </select>
+            </div>
+            <input type="text" id="username" placeholder="Username / NPSN" class="w-full p-3 mb-4 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="password" id="password" placeholder="Password" class="w-full p-3 mb-6 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="handleLogin()" id="btnLogin" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">MASUK</button>
+        </div>
+    </div>
+
+    <div id="mainPage" class="hidden container mx-auto py-8 px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-600">
+            <div>
+                <h1 id="welcomeText" class="text-2xl font-bold text-gray-800"></h1>
+                <p id="subText" class="text-gray-500"></p>
+            </div>
+            <button onclick="location.reload()" class="mt-4 md:mt-0 bg-red-100 text-red-600 px-6 py-2 rounded-full font-medium hover:bg-red-200 transition">Keluar</button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="p-4 bg-gray-50 border-b">
+                <h3 class="font-bold text-gray-700">Daftar Data Guru</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 uppercase text-xs">
+                            <th class="p-4 border-b">Nama / NIP</th>
+                            <th class="p-4 border-b">Tugas / NPSN</th>
+                            <th class="p-4 border-b text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="text-gray-700">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-blue-600 text-white">
+                <h5 class="modal-title font-bold">Update Data Guru</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body bg-gray-50">
+                <form id="updateForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="hidden" name="rowNum" id="f_rowNum">
+                    </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" onclick="submitUpdate()" class="btn btn-primary bg-blue-600">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // GANTI URL INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-3SwkmFmx1-qaIGawjtJAl3eF9Tw0MnjWvU3ZIpMSF975NFZ3NrR1yNwO9o32lz9_Ng/exec"; 
+    
+    let userState = null;
+    const columns = [
+        "Nama","NIK","NUPTK","NIP","L/P","Tempat Lahir","Tanggal Lahir","Status Tugas","Tempat Tugas",
+        "Status Sekolah","NPSN","Kecamatan","Kabupaten/Kota","Nomor HP","SK CPNS","Tanggal CPNS",
+        "SK Pengangkatan","TMT Pengangkatan","Jenis PTK","Jabatan PTK","Pendidikan","Bidang Studi Pendidikan",
+        "Bidang Studi Sertifikasi","Status Kepegawaian","Pangkat/Gol","TMT Pangkat","Masa Kerja Tahun",
+        "Masa Kerja Bulan","Mata Pelajaran Diajarkan","Jam Mengajar Perminggu","Jabatan Kepsek","Umur",
+        "TMT KEPSEK","Sertifikas Cakep","Alamat Domisili Kecamatan"
+    ];
+
+    async function handleLogin() {
+        const btn = document.getElementById('btnLogin');
+        btn.innerText = "Memproses...";
+        
+        const payload = {
+            action: 'login',
+            type: document.getElementById('loginType').value,
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value
+        };
+
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json());
+        
+        if(res.status === 'success') {
+            userState = res;
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainPage').classList.remove('hidden');
+            document.getElementById('welcomeText').innerText = res.name;
+            document.getElementById('subText').innerText = "Unit: " + res.unit;
+            loadData();
+        } else {
+            alert("Login Gagal! Cek kembali User/Password/NPSN.");
+            btn.innerText = "MASUK";
+        }
+    }
+
+    async function loadData() {
+        const filter = (userState.role === 'guru') ? userState.name : userState.unit;
+        const payload = { action: 'getData', filter: filter, role: userState.role };
+        
+        const data = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json());
+        
+        let html = '';
+        data.forEach(row => {
+            html += `<tr class="hover:bg-gray-50 border-b">
+                <td class="p-4"><b>${row.Nama}</b><br><span class="text-xs text-gray-500">${row.NIP || '-'}</span></td>
+                <td class="p-4">${row['Tempat Tugas']}<br><span class="text-xs text-blue-500 font-mono">${row.NPSN}</span></td>
+                <td class="p-4 text-center">
+                    <button onclick='openEditModal(${JSON.stringify(row)})' class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1 rounded shadow-sm text-sm font-bold transition">EDIT</button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById('tableBody').innerHTML = html;
+    }
+
+    function openEditModal(row) {
+        document.getElementById('f_rowNum').value = row.rowNum;
+        let formHtml = '';
+        columns.forEach(col => {
+            formHtml += `<div>
+                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">${col}</label>
+                <input type="text" name="${col}" value="${row[col] || ''}" class="w-full p-2 border rounded text-sm focus:border-blue-500 outline-none">
+            </div>`;
+        });
+        document.getElementById('updateForm').innerHTML = formHtml + `<input type="hidden" name="rowNum" value="${row.rowNum}">`;
+        new bootstrap.Modal(document.getElementById('editModal')).show();
+    }
+
+    async function submitUpdate() {
+        const formData = new FormData(document.getElementById('updateForm'));
+        const dataObj = {};
+        formData.forEach((value, key) => { if(key !== 'rowNum') dataObj[key] = value; });
+        
+        const payload = {
+            action: 'update',
+            rowNum: formData.get('rowNum'),
+            data: dataObj
+        };
+
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json());
+        alert(res.msg);
+        location.reload();
+    }
+</script>
+</body>
+</html>
