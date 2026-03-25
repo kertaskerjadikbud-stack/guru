@@ -3,56 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Manajemen Guru</title>
+    <title>SIM GURU - Update System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .loader { border-top-color: #3498db; animation: spinner 1.2s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .logo-pemda { width: 80px; height: auto; margin: 0 auto 1rem; }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-slate-50 text-slate-800">
 
-<div id="app">
-    <div id="loginPage" class="flex items-center justify-center min-h-screen">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border-t-4 border-blue-600">
-            <h2 class="text-3xl font-extrabold mb-2 text-center text-gray-800">SIM GURU</h2>
-            <p class="text-center text-gray-500 mb-8">Silakan masuk ke akun Anda</p>
-            
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Login</label>
-                <select id="loginType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                    <option value="guru">Guru (User & Password)</option>
-                    <option value="sekolah">Sekolah (NPSN)</option>
+<div id="app" class="container mx-auto px-4 py-10">
+    <div id="loginPage" class="max-w-md mx-auto bg-white p-8 rounded-3xl shadow-2xl border-b-8 border-blue-600 transition-all">
+        <div class="text-center mb-8">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Lambang_Kabupaten_Donggala_%282015-sekarang%29.png" alt="Logo Donggala" class="logo-pemda">
+            <h2 class="text-4xl font-black text-slate-800">SIM GURU</h2>
+            <p class="text-slate-400 mt-2 font-medium text-sm">Update Data ASN & NON ASN</p>
+            <p class="text-blue-600 font-bold text-xs uppercase tracking-widest">Kabupaten Donggala</p>
+        </div>
+        
+        <div class="space-y-5">
+            <div>
+                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Akses Sebagai</label>
+                <select id="loginType" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                    <option value="guru">Guru (Gunakan User & Pass)</option>
+                    <option value="sekolah">Sekolah (Gunakan NPSN)</option>
                 </select>
             </div>
-            <input type="text" id="username" placeholder="Username / NPSN" class="w-full p-3 mb-4 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
-            <input type="password" id="password" placeholder="Password" class="w-full p-3 mb-6 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
-            <button onclick="handleLogin()" id="btnLogin" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">MASUK</button>
+            <input type="text" id="username" placeholder="Username / NPSN" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="password" id="password" placeholder="Password" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+            
+            <button onclick="handleLogin()" id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 transition-all flex justify-center items-center">
+                <span id="btnLabel">MASUK KE SISTEM</span>
+                <div id="btnSpinner" class="hidden loader w-5 h-5 border-4 border-white rounded-full ml-3"></div>
+            </button>
         </div>
     </div>
 
-    <div id="mainPage" class="hidden container mx-auto py-8 px-4">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-600">
-            <div>
-                <h1 id="welcomeText" class="text-2xl font-bold text-gray-800"></h1>
-                <p id="subText" class="text-gray-500"></p>
+    <div id="mainPage" class="hidden max-w-5xl mx-auto scale-in">
+        <div class="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-3xl shadow-sm mb-8 border border-slate-100">
+            <div class="flex items-center gap-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Lambang_Kabupaten_Donggala_%282015-sekarang%29.png" alt="Logo Donggala" class="w-12 h-auto">
+                <div>
+                    <h1 id="welcomeText" class="text-2xl font-black text-slate-800 leading-tight"></h1>
+                    <p id="subText" class="text-blue-500 font-bold text-xs uppercase tracking-widest mt-1"></p>
+                </div>
             </div>
-            <button onclick="location.reload()" class="mt-4 md:mt-0 bg-red-100 text-red-600 px-6 py-2 rounded-full font-medium hover:bg-red-200 transition">Keluar</button>
+            <button onclick="location.reload()" class="mt-4 md:mt-0 bg-slate-100 hover:bg-red-50 text-slate-500 hover:text-red-600 px-6 py-2 rounded-xl font-bold transition-colors">Logout</button>
         </div>
 
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <div class="p-4 bg-gray-50 border-b">
-                <h3 class="font-bold text-gray-700">Daftar Data Guru</h3>
-            </div>
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-100 text-gray-600 uppercase text-xs">
-                            <th class="p-4 border-b">Nama / NIP</th>
-                            <th class="p-4 border-b">Tugas / NPSN</th>
-                            <th class="p-4 border-b text-center">Aksi</th>
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                        <tr>
+                            <th class="p-5">Informasi Guru</th>
+                            <th class="p-5">Unit Kerja</th>
+                            <th class="p-5 text-center">Tindakan</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="text-gray-700">
-                        </tbody>
+                    <tbody id="tableBody" class="divide-y divide-slate-50"></tbody>
                 </table>
             </div>
         </div>
@@ -61,90 +72,98 @@
 
 <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header bg-blue-600 text-white">
-                <h5 class="modal-title font-bold">Update Data Guru</h5>
+        <div class="modal-content border-none shadow-2xl rounded-[2rem] overflow-hidden">
+            <div class="modal-header bg-slate-900 text-white p-6 border-none">
+                <div class="flex items-center gap-3">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Lambang_Kabupaten_Donggala_%282015-sekarang%29.png" class="w-8 h-auto">
+                    <h5 class="modal-title font-black">EDIT DATA GURU</h5>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body bg-gray-50">
-                <form id="updateForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="modal-body bg-slate-50 p-8">
+                <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-r-xl">
+                    <p class="text-amber-700 text-xs font-bold uppercase">Informasi:</p>
+                    <p class="text-amber-600 text-sm">Data yang Anda simpan akan masuk ke antrean <b>EDITDATA</b> untuk diverifikasi admin.</p>
+                </div>
+                <form id="updateForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     <input type="hidden" name="rowNum" id="f_rowNum">
-                    </form>
+                </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" onclick="submitUpdate()" class="btn btn-primary bg-blue-600">Simpan Perubahan</button>
+            <div class="modal-footer bg-white p-6 border-none">
+                <button type="button" class="px-6 py-2 font-bold text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">Batal</button>
+                <button type="button" onclick="submitUpdate()" id="btnSave" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-blue-100 transition flex items-center">
+                    <span>Simpan Perubahan</span>
+                    <div id="saveSpinner" class="hidden loader w-4 h-4 border-2 border-white rounded-full ml-3"></div>
+                </button>
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // GANTI URL INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzI2YZssev7HRZTw8rXx-WvWj2xv0gw_7YthXsxZGZGyF3EEWdC855f_XsN-iQfJrjc/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwr258d_bos_0x9RBwlSs8pgYHFx0INcAAtM-aB9OhOKGBtPbhM-HfKpf3j6GGXfxbdBg/exec"; 
     
     let userState = null;
-    const columns = [
-        "Nama","NIK","NUPTK","NIP","L/P","Tempat Lahir","Tanggal Lahir","Status Tugas","Tempat Tugas",
-        "Status Sekolah","NPSN","Kecamatan","Kabupaten/Kota","Nomor HP","SK CPNS","Tanggal CPNS",
-        "SK Pengangkatan","TMT Pengangkatan","Jenis PTK","Jabatan PTK","Pendidikan","Bidang Studi Pendidikan",
-        "Bidang Studi Sertifikasi","Status Kepegawaian","Pangkat/Gol","TMT Pangkat","Masa Kerja Tahun",
-        "Masa Kerja Bulan","Mata Pelajaran Diajarkan","Jam Mengajar Perminggu","Jabatan Kepsek","Umur",
-        "TMT KEPSEK","Sertifikas Cakep","Alamat Domisili Kecamatan"
-    ];
+    const columns = ["Nama","NIK","NUPTK","NIP","L/P","Tempat Lahir","Tanggal Lahir","Status Tugas","Tempat Tugas","Status Sekolah","NPSN","Kecamatan","Kabupaten/Kota","Nomor HP","SK CPNS","Tanggal CPNS","SK Pengangkatan","TMT Pengangkatan","Jenis PTK","Jabatan PTK","Pendidikan","Bidang Studi Pendidikan","Bidang Studi Sertifikasi","Status Kepegawaian","Pangkat/Gol","TMT Pangkat","Masa Kerja Tahun","Masa Kerja Bulan","Mata Pelajaran Diajarkan","Jam Mengajar Perminggu","Jabatan Kepsek","Umur","TMT KEPSEK","Sertifikas Cakep","Alamat Domisili Kecamatan"];
 
     async function handleLogin() {
-        const btn = document.getElementById('btnLogin');
-        btn.innerText = "Memproses...";
+        if(!document.getElementById('username').value) return alert("Isi Username!");
+        toggleLoading('btnLogin', 'btnSpinner', 'btnLabel', true, "Otentikasi...");
         
-        const payload = {
-            action: 'login',
-            type: document.getElementById('loginType').value,
-            username: document.getElementById('username').value,
-            password: document.getElementById('password').value
-        };
+        try {
+            const payload = {
+                action: 'login',
+                type: document.getElementById('loginType').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
 
-        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json());
-        
-        if(res.status === 'success') {
-            userState = res;
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('mainPage').classList.remove('hidden');
-            document.getElementById('welcomeText').innerText = res.name;
-            document.getElementById('subText').innerText = "Unit: " + res.unit;
-            loadData();
-        } else {
-            alert("Login Gagal! Cek kembali User/Password/NPSN.");
-            btn.innerText = "MASUK";
+            const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+            const res = await response.json();
+            
+            if(res.status === 'success') {
+                userState = res;
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainPage').classList.remove('hidden');
+                document.getElementById('welcomeText').innerText = res.name;
+                document.getElementById('subText').innerText = "Unit/NPSN: " + res.unit;
+                loadData();
+            } else {
+                alert("Gagal! Data login tidak ditemukan.");
+                toggleLoading('btnLogin', 'btnSpinner', 'btnLabel', false, "MASUK KE SISTEM");
+            }
+        } catch (e) {
+            alert("Koneksi Error. Coba lagi.");
+            toggleLoading('btnLogin', 'btnSpinner', 'btnLabel', false, "MASUK KE SISTEM");
         }
     }
 
     async function loadData() {
         const filter = (userState.role === 'guru') ? userState.name : userState.unit;
         const payload = { action: 'getData', filter: filter, role: userState.role };
-        
-        const data = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json());
+        const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await response.json();
         
         let html = '';
         data.forEach(row => {
-            html += `<tr class="hover:bg-gray-50 border-b">
-                <td class="p-4"><b>${row.Nama}</b><br><span class="text-xs text-gray-500">${row.NIP || '-'}</span></td>
-                <td class="p-4">${row['Tempat Tugas']}<br><span class="text-xs text-blue-500 font-mono">${row.NPSN}</span></td>
-                <td class="p-4 text-center">
-                    <button onclick='openEditModal(${JSON.stringify(row)})' class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1 rounded shadow-sm text-sm font-bold transition">EDIT</button>
+            html += `<tr class="hover:bg-slate-50 transition-colors">
+                <td class="p-5 font-bold text-slate-700">${row.Nama}<div class="text-[10px] text-slate-400 font-normal mt-1">NIP. ${row.NIP || '-'}</div></td>
+                <td class="p-5 text-sm text-slate-500 font-medium">${row['Tempat Tugas']}<div class="text-[10px] text-blue-500 font-bold mt-1 tracking-tighter">${row.NPSN}</div></td>
+                <td class="p-5 text-center">
+                    <button onclick='openEditModal(${JSON.stringify(row)})' class="bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white px-5 py-2 rounded-xl text-[11px] font-black uppercase transition-all shadow-sm">Edit Data</button>
                 </td>
             </tr>`;
         });
-        document.getElementById('tableBody').innerHTML = html;
+        document.getElementById('tableBody').innerHTML = html || '<tr><td colspan="3" class="p-10 text-center text-slate-400">Tidak ada data untuk ditampilkan.</td></tr>';
     }
 
     function openEditModal(row) {
-        document.getElementById('f_rowNum').value = row.rowNum;
         let formHtml = '';
         columns.forEach(col => {
-            formHtml += `<div>
-                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">${col}</label>
-                <input type="text" name="${col}" value="${row[col] || ''}" class="w-full p-2 border rounded text-sm focus:border-blue-500 outline-none">
+            formHtml += `<div class="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">${col}</label>
+                <input type="text" name="${col}" value="${row[col] || ''}" class="w-full p-2 bg-transparent text-sm font-bold text-slate-700 outline-none focus:text-blue-600 transition">
             </div>`;
         });
         document.getElementById('updateForm').innerHTML = formHtml + `<input type="hidden" name="rowNum" value="${row.rowNum}">`;
@@ -152,19 +171,29 @@
     }
 
     async function submitUpdate() {
+        toggleLoading('btnSave', 'saveSpinner', '', true, "Mengirim...");
         const formData = new FormData(document.getElementById('updateForm'));
         const dataObj = {};
-        formData.forEach((value, key) => { if(key !== 'rowNum') dataObj[key] = value; });
+        formData.forEach((v, k) => { if(k !== 'rowNum') dataObj[k] = v; });
         
-        const payload = {
-            action: 'update',
-            rowNum: formData.get('rowNum'),
-            data: dataObj
-        };
+        const payload = { action: 'update', rowNum: formData.get('rowNum'), data: dataObj };
+        try {
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json());
+            alert(res.msg);
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            toggleLoading('btnSave', 'saveSpinner', '', false, "Simpan Perubahan");
+        } catch (e) {
+            alert("Gagal kirim data.");
+            toggleLoading('btnSave', 'saveSpinner', '', false, "Simpan Perubahan");
+        }
+    }
 
-        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json());
-        alert(res.msg);
-        location.reload();
+    function toggleLoading(btnId, spinId, labelId, isLoading, text) {
+        const btn = document.getElementById(btnId);
+        const spin = document.getElementById(spinId);
+        btn.disabled = isLoading;
+        spin.classList.toggle('hidden', !isLoading);
+        if(labelId) document.getElementById(labelId).innerText = text;
     }
 </script>
 </body>
